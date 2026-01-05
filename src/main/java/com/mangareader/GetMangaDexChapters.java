@@ -149,6 +149,7 @@ public class GetMangaDexChapters {
                             } else {
                                 bytes = page.request().get(imageURL).body();
                             }
+//                            toPDF.imageToPdf(bytes);
                             fos.write(bytes);
 //                    System.out.println("Written " + imageURL);
                         } catch (IOException e) {
@@ -184,7 +185,8 @@ public class GetMangaDexChapters {
             }
             browser.close();
         } catch (Exception exception) {
-            exception.printStackTrace();
+//            exception.printStackTrace();
+            System.out.println("Something went wrong!");
         }
     }
 
@@ -205,8 +207,7 @@ public class GetMangaDexChapters {
     }
 
     public static void main(String[] args) {
-//        getImages("https://mangadex.org/chapter/cccd6017-87d0-4a02-84d5-1f8be9ba5253/1");
-        getImages("https://mangadex.org/chapter/676d5f36-d9e1-4355-a6f6-d3659bc03440");
+        getImages("https://mangadex.org/chapter/cccd6017-87d0-4a02-84d5-1f8be9ba5253/1");
 //        getImages("https://mangadex.org/chapter/aadf8438-41c5-4d08-bfd9-ab0acf6e4b4f/1");
 //        getImages("https://www.nelomanga.net/manga/the-villainess-just-wantsto-live-in-peace/chapter-56");
 //        getImages("https://www.w3.org/");

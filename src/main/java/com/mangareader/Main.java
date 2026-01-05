@@ -1,17 +1,33 @@
 package com.mangareader;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        Scanner scanner = new Scanner(System.in);
+//        GetMangaDexChapters.getImages("https://mangadex.org/chapter/cccd6017-87d0-4a02-84d5-1f8be9ba5253/1");
+        System.out.println("Welcome to Mangadex Downloader");
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+        while (true) {
+            System.out.println("Please send me the url of the chapter");
+            String domainName = scanner.nextLine();
+            System.out.println("Which format you want to download as:\n1. Images\n2. Pdfs");
+            while (!scanner.hasNextInt()) {
+                String trash = scanner.nextLine();
+                System.out.println("Wrong format! Please choose 1 or 2");
+            }
+            int format = scanner.nextInt();
+            if (format == 1) {
+                GetMangaDexChapters.getImages(domainName);
+            } else {
+                toPDF.getPDFs(domainName);
+            }
+            String trash = scanner.nextLine();
+            System.out.println("Type yes/y to download another manga");
+            String again = scanner.nextLine();
+            if (!(again.equals("yes") || again.equals("y"))) {
+                break;
+            }
         }
     }
 }
