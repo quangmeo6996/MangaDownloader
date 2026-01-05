@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class GetMangaDexChapters {
-//    private static final Object lock = new Object();
+    //    private static final Object lock = new Object();
     public static void getImages(String domainName) {
         try (Playwright playwright = Playwright.create()) {
             BrowserType chromium = playwright.chromium();
@@ -119,43 +119,43 @@ public class GetMangaDexChapters {
                 System.out.println("Got " + imageURLs.size() + " Image URL!");
                 File newDirectory = new File("images/" + currentChapter);
                 newDirectory.mkdirs();
-                    for (String imageURL : imageURLs) {
-                        System.out.println("got this URL " + imageURL);
-                        String imgName = imageURL.substring(imageURL.length() - 5);
+                for (String imageURL : imageURLs) {
+                    System.out.println("got this URL " + imageURL);
+                    String imgName = imageURL.substring(imageURL.length() - 5);
 //                        if (imgName.indexOf('.') == -1) {
 //                            imgName = currentChapter + "/" + imgName + ".jpg";
 //                        }
-                        imgName = currentChapter + "/" + imgName + ".jpg";
-                        try (FileOutputStream fos = new
-                                FileOutputStream("images/" + imgName)) {
-                            byte[] bytes;
-                            if (imageURL.startsWith("blob:")) {
-                                String base64ImageData = (String) page.evaluate("async (blobUrl) => {" +
-                                        "  const response = await fetch(blobUrl);" +
-                                        "  const arrayBuffer = await response.arrayBuffer();" +
-                                        "  const uint8Array = new Uint8Array(arrayBuffer);" +
-                                        "  let binaryString = '';" +
-                                        "  uint8Array.forEach(byte => {" +
-                                        "    binaryString += String.fromCharCode(byte);" +
-                                        "  });" +
-                                        "  return btoa(binaryString);" +  // Convert to base64
-                                        "}", imageURL);
-                                bytes = java.util.Base64.getDecoder().decode(base64ImageData);
+                    imgName = currentChapter + "/" + imgName + ".jpg";
+                    try (FileOutputStream fos = new
+                            FileOutputStream("images/" + imgName)) {
+                        byte[] bytes;
+                        if (imageURL.startsWith("blob:")) {
+                            String base64ImageData = (String) page.evaluate("async (blobUrl) => {" +
+                                    "  const response = await fetch(blobUrl);" +
+                                    "  const arrayBuffer = await response.arrayBuffer();" +
+                                    "  const uint8Array = new Uint8Array(arrayBuffer);" +
+                                    "  let binaryString = '';" +
+                                    "  uint8Array.forEach(byte => {" +
+                                    "    binaryString += String.fromCharCode(byte);" +
+                                    "  });" +
+                                    "  return btoa(binaryString);" +  // Convert to base64
+                                    "}", imageURL);
+                            bytes = java.util.Base64.getDecoder().decode(base64ImageData);
 //                        bytes = (byte[])page.evaluate("async (url) => { " +
 //                                 "const response = await fetch(url); " +
 //                                "const blob = await response.blob(); " +
 //                                "const arrayBuffer = await blob.arrayBuffer(); " +
 //                                "return new Uint8Array(arrayBuffer); }", imageURL);
-                            } else {
-                                bytes = page.request().get(imageURL).body();
-                            }
-//                            toPDF.imageToPdf(bytes);
-                            fos.write(bytes);
-//                    System.out.println("Written " + imageURL);
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        } else {
+                            bytes = page.request().get(imageURL).body();
                         }
+//                            toPDF.imageToPdf(bytes);
+                        fos.write(bytes);
+//                    System.out.println("Written " + imageURL);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+                }
                 String currentURL = page.url();
 //                imageURLs.clear();
 //                imageURLs = getURLS(page);
@@ -190,19 +190,129 @@ public class GetMangaDexChapters {
         }
     }
 
+    public static void getImagesOneChap(String domainName) {
+        try (Playwright playwright = Playwright.create()) {
+            BrowserType chromium = playwright.chromium();
+//            Browser browser = chromium.launch();
+
+//            ArrayList<String> argsList = new ArrayList<>();
+//            argsList.add("--start-maximized");
+//            argsList.add("--disable-infobars");
+//            argsList.add("--disable-blink-features=AutomationControlled");
+//            argsList.add("--disable-dev-shm-usage");
+//            argsList.add("--no-sandbox");
+//            argsList.add("--disable-setuid-sandbox");
+//            argsList.add("--disable-web-security");
+//            argsList.add("--disable-features=IsolateOrigins,site-per-process");
+            Browser browser = chromium.launch(new BrowserType.LaunchOptions().setHeadless(false)/*.setArgs(argsList)*/);
+//            BrowserContext context = browser.newContext(new Browser.NewContextOptions()
+//                    .setViewportSize(1920, 1080)  // Set the viewport size
+//                    .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36")  // Set the User-Agent
+//                    .setLocale("en-US")  // Set the locale to 'en-US'
+//                    .setTimezoneId("Australia/Melbourne")  // Set the timezone to 'America/New_York'
+//                    .setPermissions(Arrays.asList("geolocation"))  // Grant geolocation permission
+//            );
+
+//            Page page = context.newPage();
+            Page page = browser.newPage();
+
+            System.out.println("Gotchu");
+            // Usually cause timeout navigation
+            // https://autify.com/blog/playwright-timeout
+
+//            ArrayList<String> imageURLs = getURLS(page);
+//            ArrayList<String> imageURLs = new ArrayList<>();
+//                page.onRequest(request -> {
+//                    // Check if the request is for an image by looking at the URL (file extensions)
+//                    if (request.resourceType().equals("image") && request.url().startsWith("blob:")) {
+//                        // Log the image URL and add it to the list
+//                        System.out.println("Image Request: " + request.url());
+//                        imageURLs.add(request.url());
+//                    }
+//                });
+
+//            page.onRequest(request -> {
+//                // Check if the request is for an image by looking at the URL (file extensions)
+//                if (request.resourceType().equals("image")) {
+//                    // Log the image URL and add it to the list
+//                    System.out.println("Image Request: " + request.url());
+//                    imageURLs.add(request.url());
+//                }
+//            });
+
+            page.navigate(domainName);
+//            page.waitForTimeout(3000);
+//            page.waitForURL(domainName, new Page.WaitForURLOptions().setTimeout(60000));
+            // Have to fix: Handle the verification of website
+            // https://www.zenrows.com/blog/playwright-cloudflare-bypass#what-is-cloudflare
+//            page.waitForLoadState(LoadState.LOAD);
+            page.waitForLoadState(LoadState.DOMCONTENTLOADED);
+            System.out.println("Load Page Successfully!");
+            page.locator("div:text(' Menu ')").click();
+            page.locator("span:text('Reader Settings')").click();
+            page.locator("span:text('Long Strip')").click();
+            page.reload();
+//            page.waitForTimeout(10000);
+            page.waitForLoadState(LoadState.NETWORKIDLE,
+                    new Page.WaitForLoadStateOptions().setTimeout(60000));
+
+            ArrayList<String> imageURLs = getURLS(page);
+            String maxChapter = page.locator("ul > li:text('Chapter')")
+                    .first().innerText();
+            String currentChapter = page.locator(".reader--header-title").innerText();
+            System.out.println("Current: " + currentChapter);
+            System.out.println("Max: " + maxChapter);
+            System.out.println("Got " + imageURLs.size() + " Image URL!");
+            File newDirectory = new File("images/" + currentChapter);
+            newDirectory.mkdirs();
+            for (String imageURL : imageURLs) {
+                System.out.println("got this URL " + imageURL);
+                String imgName = imageURL.substring(imageURL.length() - 5);
+                imgName = currentChapter + "/" + imgName + ".jpg";
+                try (FileOutputStream fos = new
+                        FileOutputStream("images/" + imgName)) {
+                    byte[] bytes;
+                    if (imageURL.startsWith("blob:")) {
+                        String base64ImageData = (String) page.evaluate("async (blobUrl) => {" +
+                                "  const response = await fetch(blobUrl);" +
+                                "  const arrayBuffer = await response.arrayBuffer();" +
+                                "  const uint8Array = new Uint8Array(arrayBuffer);" +
+                                "  let binaryString = '';" +
+                                "  uint8Array.forEach(byte => {" +
+                                "    binaryString += String.fromCharCode(byte);" +
+                                "  });" +
+                                "  return btoa(binaryString);" +  // Convert to base64
+                                "}", imageURL);
+                        bytes = java.util.Base64.getDecoder().decode(base64ImageData);
+                    } else {
+                        bytes = page.request().get(imageURL).body();
+                    }
+                    fos.write(bytes);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+//                String currentURL = page.url();
+//                page.keyboard().press("Period");
+//                page.waitForFunction("url => window.location.href !== url", currentURL);
+//                page.reload();
+//                page.waitForLoadState(LoadState.NETWORKIDLE);
+//                System.out.println("Load Page Successfully!");
+//                if (currentChapter.trim().equals(maxChapter.trim())) {
+//                    System.out.println("Stop moving");
+//                    break;
+//                }
+//                System.out.println("Next chapter.");
+            browser.close();
+        } catch (Exception exception) {
+            System.out.println("Something went wrong!");
+        }
+    }
+
     public static ArrayList<String> getURLS(Page page) {
         ArrayList<String> imageURLs = (ArrayList<String>)
-                    page.evalOnSelectorAll("img",
-                            "imgs => imgs.map(img => img.src).filter(src => src.startsWith('blob:'))");
-//        ArrayList<String> imageURLs = new ArrayList<>();
-//        page.onRequest(request -> {
-//            // Check if the request is for an image by looking at the URL (file extensions)
-//            if (request.resourceType().equals("image") && request.url().startsWith("blob:")) {
-//                // Log the image URL and add it to the list
-//                System.out.println("Image Request: " + request.url());
-//                imageURLs.add(request.url());
-//            }
-//        });
+                page.evalOnSelectorAll("img",
+                        "imgs => imgs.map(img => img.src).filter(src => src.startsWith('blob:'))");
         return imageURLs;
     }
 
