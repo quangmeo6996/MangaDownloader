@@ -27,7 +27,7 @@ public class GetMangaDexChapters {
 //            argsList.add("--disable-setuid-sandbox");
 //            argsList.add("--disable-web-security");
 //            argsList.add("--disable-features=IsolateOrigins,site-per-process");
-            Browser browser = chromium.launch(new BrowserType.LaunchOptions().setHeadless(false)/*.setArgs(argsList)*/);
+            Browser browser = chromium.launch(/*new BrowserType.LaunchOptions().setHeadless(false).setArgs(argsList)*/);
 //            BrowserContext context = browser.newContext(new Browser.NewContextOptions()
 //                    .setViewportSize(1920, 1080)  // Set the viewport size
 //                    .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36")  // Set the User-Agent
@@ -204,7 +204,7 @@ public class GetMangaDexChapters {
 //            argsList.add("--disable-setuid-sandbox");
 //            argsList.add("--disable-web-security");
 //            argsList.add("--disable-features=IsolateOrigins,site-per-process");
-            Browser browser = chromium.launch(new BrowserType.LaunchOptions().setHeadless(false)/*.setArgs(argsList)*/);
+            Browser browser = chromium.launch(/*new BrowserType.LaunchOptions().setHeadless(false).setArgs(argsList)*/);
 //            BrowserContext context = browser.newContext(new Browser.NewContextOptions()
 //                    .setViewportSize(1920, 1080)  // Set the viewport size
 //                    .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36")  // Set the User-Agent

@@ -32,7 +32,7 @@ public class toPDF {
     public static void getPDFs(String domainName) {
         try (Playwright playwright = Playwright.create()) {
             BrowserType chromium = playwright.chromium();
-            Browser browser = chromium.launch(new BrowserType.LaunchOptions().setHeadless(false)/*.setArgs(argsList)*/);
+            Browser browser = chromium.launch(/*new BrowserType.LaunchOptions().setHeadless(false).setArgs(argsList)*/);
             Page page = browser.newPage();
 
             System.out.println("Gotchu");
@@ -109,7 +109,7 @@ public class toPDF {
     public static void getPDFsOneChap(String domainName) {
         try (Playwright playwright = Playwright.create()) {
             BrowserType chromium = playwright.chromium();
-            Browser browser = chromium.launch(new BrowserType.LaunchOptions().setHeadless(false)/*.setArgs(argsList)*/);
+            Browser browser = chromium.launch(/*new BrowserType.LaunchOptions().setHeadless(false).setArgs(argsList)*/);
             Page page = browser.newPage();
 
             System.out.println("Gotchu");
