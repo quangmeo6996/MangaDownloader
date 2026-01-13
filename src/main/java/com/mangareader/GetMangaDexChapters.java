@@ -113,6 +113,7 @@ public class GetMangaDexChapters {
                 String maxChapter = page.locator("ul > li:text('Chapter')")
                         .first().innerText();
                 String currentChapter = page.locator(".reader--header-title").innerText();
+//                String currentChapter = page.locator("div > span:text('Chapter')").innerText();
                 System.out.println("Current: " + currentChapter);
                 System.out.println("Max: " + maxChapter);
 //                page.offRequest(request -> {});
