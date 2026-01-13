@@ -26,4 +26,4 @@ Then, you can interact with the application on command-line.
 ***How to  find the urls of chapter from [MangaDex](https://mangadex.org/):***
 1. Find the chapter you want to download from [MangaDex](https://mangadex.org/)
 2. Go to the reading pages of the chapter.
-3. Copy the urls from that pages.
+3. Copy the urls from that pages. (E.g. https://mangadex.org/chapter/183402e6-24e6-4426-9e15-1d8fb3d76749)
