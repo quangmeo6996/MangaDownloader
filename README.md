@@ -7,15 +7,24 @@ You can download one chapter, all available chapter starting on the current one 
 
 ## Installation
 
+### MangaDownloader.exe
+
+1. Download `MangaDownloader.zip` from [release](https://github.com/quangmeo6996/MangaDownloader/releases)
+
+2. Unzip the folder.
+
+### MangaDownloader.jar
+
 What will you need: 
 
--Java Java Runtime Environment (JDK) 21 or more.
+- Java Java Runtime Environment (JRE) 21 or more.
 
 Download `MangaDownloader.jar` from [release](https://github.com/quangmeo6996/MangaDownloader/releases)
 
 ## Running MangaDownloader
+Click on the MangaDownloader.exe inside the MangaDownloader folder.
 
-To run MangaDownloader, execute the .jar file from terminal of command prompt:
+To run MangaDownloader.jar, execute the .jar file from terminal of command prompt:
 
 ```bash
 java -jar MangaDownloader.jar
