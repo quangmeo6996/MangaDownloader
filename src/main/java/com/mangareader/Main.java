@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        BrowserSetup.setPath();
         Scanner scanner = new Scanner(System.in);
 //        GetMangaDexChapters.getImages("https://mangadex.org/chapter/cccd6017-87d0-4a02-84d5-1f8be9ba5253/1");
         System.out.println("Welcome to Mangadex Downloader");

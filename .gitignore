@@ -1,9 +1,11 @@
 target/
+browsers/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 images/
 pdfs/
+build.bat
 *.bat
 
 ### IntelliJ IDEA ###
