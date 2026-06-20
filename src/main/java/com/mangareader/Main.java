@@ -18,22 +18,25 @@ public class Main {
                 System.out.println("Wrong format! Please choose 1 or 2");
             }
             int format = scanner.nextInt();
-            System.out.println("Do you want to download:\n1. One chapter\n2. All chapters");
+            System.out.println("Do you want to download:\n1. One chapter\n2. 10 chapters\n3. All chapters");
             while (!scanner.hasNextInt()) {
                 String trash = scanner.nextLine();
-                System.out.println("Wrong format! Please choose 1 or 2");
+                System.out.println("Wrong format! Please choose 1, 2, or 3");
             }
             int numChap = scanner.nextInt();
             if (format == 1 && numChap == 1) {
                 GetMangaDexChapters.getImagesOneChap(domainName);
 //                GetMangaDexChapters.getImages(domainName);
-            } else if (format == 1 && numChap != 1) {
-                GetMangaDexChapters.getImages(domainName);
+            } else if (format == 1 && numChap == 2) {
+                GetMangaDexChapters.getImagesTenChap(domainName);
             } else if (format != 1 && numChap == 1) {
                 toPDF.getPDFsOneChap(domainName);
 //                toPDF.getPDFs(domainName);
-            }
-            else {
+            } else if (format != 1 && numChap == 2) {
+                toPDF.getPDFsTenChap(domainName);
+            } else if (format == 1) {
+                GetMangaDexChapters.getImages(domainName);
+            } else {
                 toPDF.getPDFs(domainName);
             }
             String trash = scanner.nextLine();

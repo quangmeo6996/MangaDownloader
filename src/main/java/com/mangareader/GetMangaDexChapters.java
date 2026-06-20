@@ -14,6 +14,10 @@ import java.util.ArrayList;
 public class GetMangaDexChapters {
     //    private static final Object lock = new Object();
     public static void getImages(String domainName) {
+        while (getImagesTenChap(domainName)) {}
+    }
+
+    public static boolean getImagesTenChap(String domainName) {
         try (Playwright playwright = Playwright.create()) {
             BrowserType chromium = playwright.chromium();
 //            Browser browser = chromium.launch();
@@ -78,7 +82,7 @@ public class GetMangaDexChapters {
 //            page.waitForTimeout(10000);
             page.waitForLoadState(LoadState.NETWORKIDLE,
                     new Page.WaitForLoadStateOptions().setTimeout(60000));
-            while (true) {
+            for (int i = 0; i < 10; i++) {
 
                 // need to retrive all blobURL img from dynamic website
 //            ArrayList<String> imageURLs = (ArrayList<String>)
@@ -188,7 +192,9 @@ public class GetMangaDexChapters {
         } catch (Exception exception) {
 //            exception.printStackTrace();
             System.out.println("Something went wrong!");
+            return false;
         }
+        return true;
     }
 
     public static void getImagesOneChap(String domainName) {
@@ -318,7 +324,8 @@ public class GetMangaDexChapters {
     }
 
     public static void main(String[] args) {
-        getImages("https://mangadex.org/chapter/cccd6017-87d0-4a02-84d5-1f8be9ba5253/1");
+//        getImages("https://mangadex.org/chapter/cccd6017-87d0-4a02-84d5-1f8be9ba5253/1");
+        getImages("https://mangaplus.shueisha.co.jp/viewer/1020497");
 //        getImages("https://mangadex.org/chapter/aadf8438-41c5-4d08-bfd9-ab0acf6e4b4f/1");
 //        getImages("https://www.nelomanga.net/manga/the-villainess-just-wantsto-live-in-peace/chapter-56");
 //        getImages("https://www.w3.org/");

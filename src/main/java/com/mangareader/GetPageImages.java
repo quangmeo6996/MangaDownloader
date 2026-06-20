@@ -41,7 +41,7 @@ public class GetPageImages {
             // Usually cause timeout navigation
             // https://autify.com/blog/playwright-timeout
 
-            ArrayList<String> imageURLs = getURLS(page);
+
 
 //            page.onRequest(request -> {
 //                // Check if the request is for an image by looking at the URL (file extensions)
@@ -60,8 +60,21 @@ public class GetPageImages {
 //            page.waitForLoadState(LoadState.LOAD);
             page.waitForLoadState(LoadState.NETWORKIDLE,
                     new Page.WaitForLoadStateOptions().setTimeout(60000));
+//            page.evaluate("() => {" +
+//                    "  document.querySelectorAll('img[loading=\"lazy\"]').forEach(img => {" +
+//                    "    img.removeAttribute('loading');" +
+//                    "  });" +
+//                    "}");
+//            int pageSize = (int) page.evaluate("() => window.innerHeight;");
+//            int browserSize = (int) page.evaluate("() => document.body.scrollHeight");
+//            System.out.println("Page and browsersize" + pageSize + browserSize);
+//            for (int i = 0; i < pageSize; i += browserSize) {
+//                page.mouse().wheel(0, i);
+//                page.waitForLoadState(LoadState.NETWORKIDLE);
+//            }
+            page.waitForLoadState(LoadState.NETWORKIDLE,
+                    new Page.WaitForLoadStateOptions().setTimeout(60000));
             System.out.println("Load Page Successfully!");
-
             int i = 0;
             while(true) {
 
@@ -92,7 +105,7 @@ public class GetPageImages {
 //                    URL.createObjectURL(fakeBlob);
 //                }, 3000); // Simulate a dynamic event after 3 seconds
 //            """);
-
+                ArrayList<String> imageURLs = getURLS(page);
                 String currentURL = page.url();
                 System.out.println("Got " + imageURLs.size() + " Image URL!");
                 File newDirectory = new File("images/chap" + i);
@@ -152,24 +165,29 @@ public class GetPageImages {
     }
 
     public static ArrayList<String> getURLS(Page page) {
-        ArrayList<String> imageURLs = new ArrayList<>();
-        page.onRequest(request -> {
-            // Check if the request is for an image by looking at the URL (file extensions)
-            if (request.resourceType().equals("image")) {
-                // Log the image URL and add it to the list
-                System.out.println("Image Request: " + request.url());
-                imageURLs.add(request.url());
-            }
-        });
+//        ArrayList<String> imageURLs = new ArrayList<>();
+//        page.onRequest(request -> {
+//            // Check if the request is for an image by looking at the URL (file extensions)
+//            if (request.resourceType().equals("image")) {
+//                // Log the image URL and add it to the list
+//                System.out.println("Image Request: " + request.url());
+//                imageURLs.add(request.url());
+//            }
+//        });
+//        return imageURLs;
+        ArrayList<String> imageURLs = (ArrayList<String>)
+                page.evalOnSelectorAll("img",
+                        "imgs => imgs.map(img => img.src)");
         return imageURLs;
     }
 
     public static void main(String[] args) {
 //        getImages("https://mangadex.org/chapter/cccd6017-87d0-4a02-84d5-1f8be9ba5253/1");
-        getImages("https://mangadex.org/chapter/aadf8438-41c5-4d08-bfd9-ab0acf6e4b4f/1");
+//        getImages("https://mangadex.org/chapter/aadf8438-41c5-4d08-bfd9-ab0acf6e4b4f/1");
 //        getImages("https://www.nelomanga.net/manga/the-villainess-just-wantsto-live-in-peace/chapter-56");
 //        getImages("https://www.w3.org/");
 //        getImages("https://nettruyenviet1.com/truyen-tranh/giao-chu-ma-giao-vung-trom-xem-ta-tu-luyen/chuong-1");
 //        getImages("https://www.mangakakalot.gg/manga/hunter-world-s-gardener/chapter-1");
+        getImages("https://mangaplus.shueisha.co.jp/viewer/1020497");
     }
 }

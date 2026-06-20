@@ -30,9 +30,13 @@ public class toPDF {
     }
 
     public static void getPDFs(String domainName) {
+        while (getPDFsTenChap(domainName)) {}
+    }
+
+    public static boolean getPDFsTenChap(String domainName) {
         try (Playwright playwright = Playwright.create()) {
             BrowserType chromium = playwright.chromium();
-            Browser browser = chromium.launch(/*new BrowserType.LaunchOptions().setHeadless(false).setArgs(argsList)*/);
+            Browser browser = chromium.launch(new BrowserType.LaunchOptions().setHeadless(true));
             Page page = browser.newPage();
 
             System.out.println("Gotchu");
@@ -47,7 +51,7 @@ public class toPDF {
 
             page.waitForLoadState(LoadState.NETWORKIDLE,
                     new Page.WaitForLoadStateOptions().setTimeout(60000));
-            while (true) {
+            for (int i = 0; i < 10; i++) {
                 ArrayList<String> imageURLs = GetMangaDexChapters.getURLS(page);
                 String maxChapter = page.locator("ul > li:text('Chapter')")
                         .first().innerText();
@@ -103,7 +107,9 @@ public class toPDF {
             browser.close();
         } catch (Exception exception) {
             System.out.println("Something went wrong!");
+            return false;
         }
+        return true;
     }
 
     public static void getPDFsOneChap(String domainName) {
@@ -171,6 +177,7 @@ public class toPDF {
     }
 
     public static void main(String[] args) {
-        getPDFs("https://mangadex.org/chapter/aadf8438-41c5-4d08-bfd9-ab0acf6e4b4f/1");
+//        getPDFs("https://mangadex.org/chapter/aadf8438-41c5-4d08-bfd9-ab0acf6e4b4f/1");
+        getPDFs("https://mangadex.org/chapter/6936ee17-15bf-4775-9941-4d05ef5267bc");
     }
 }
