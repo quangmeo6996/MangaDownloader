@@ -30,14 +30,14 @@ public class Main {
             } else if (format == 1 && numChap == 2) {
                 GetMangaDexChapters.getImagesTenChap(domainName);
             } else if (format != 1 && numChap == 1) {
-                toPDF.getPDFsOneChap(domainName);
+                ToPDF.getPDFsOneChap(domainName);
 //                toPDF.getPDFs(domainName);
             } else if (format != 1 && numChap == 2) {
-                toPDF.getPDFsTenChap(domainName);
+                ToPDF.getPDFsTenChap(domainName);
             } else if (format == 1) {
                 GetMangaDexChapters.getImages(domainName);
             } else {
-                toPDF.getPDFs(domainName);
+                ToPDF.getPDFs(domainName);
             }
             String trash = scanner.nextLine();
             System.out.println("Type yes/y to download another manga");

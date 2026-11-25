@@ -76,9 +76,11 @@ public class GetPageImages {
                     new Page.WaitForLoadStateOptions().setTimeout(60000));
             System.out.println("Load Page Successfully!");
             int i = 0;
-            while(true) {
+            try (MangaDetection mangaDetection = new
+                    MangaDetection("src/main/resources/models/mobilenetv3_manga_detector.onnx")) {
+                while (true) {
 
-                // need to retrive all blobURL img from dynamic website
+                    // need to retrive all blobURL img from dynamic website
 //            ArrayList<String> imageURLs = (ArrayList<String>)
 //                    page.evalOnSelectorAll("img", "imgs => imgs.map(img => img.src)");
 
@@ -105,58 +107,79 @@ public class GetPageImages {
 //                    URL.createObjectURL(fakeBlob);
 //                }, 3000); // Simulate a dynamic event after 3 seconds
 //            """);
-                ArrayList<String> imageURLs = getURLS(page);
-                String currentURL = page.url();
-                System.out.println("Got " + imageURLs.size() + " Image URL!");
-                File newDirectory = new File("images/chap" + i);
-                newDirectory.mkdirs();
-                for (String imageURL : imageURLs) {
-                    System.out.println("got this URL " + imageURL);
-                    String imgName = imageURL.substring(imageURL.length() - 5);
-                    if (imgName.indexOf('.') == -1) {
-                        imgName = "chap" + i + "/" + imgName + ".jpg";
-                    }
-                    try (FileOutputStream fos = new
-                            FileOutputStream("images/" + imgName)) {
-                        byte[] bytes;
-                        if (imageURL.startsWith("blob:")) {
-                            String base64ImageData = (String) page.evaluate("async (blobUrl) => {" +
-                                    "  const response = await fetch(blobUrl);" +
-                                    "  const arrayBuffer = await response.arrayBuffer();" +
-                                    "  const uint8Array = new Uint8Array(arrayBuffer);" +
-                                    "  let binaryString = '';" +
-                                    "  uint8Array.forEach(byte => {" +
-                                    "    binaryString += String.fromCharCode(byte);" +
-                                    "  });" +
-                                    "  return btoa(binaryString);" +  // Convert to base64
-                                    "}", imageURL);
-                            bytes = java.util.Base64.getDecoder().decode(base64ImageData);
+                    ArrayList<String> imageURLs = getURLS(page);
+                    String currentURL = page.url();
+                    System.out.println("Got " + imageURLs.size() + " Image URL!");
+                    File newDirectory = new File("images/chap" + i);
+                    newDirectory.mkdirs();
+
+                    int imageCount = 1;
+                    for (String imageURL : imageURLs) {
+                        System.out.println("got this URL " + imageURL);
+                        String extension = ".jpg";
+                        String cleanUrl = imageURL.split("[?#]", 2)[0];
+                        int slash = cleanUrl.lastIndexOf('/');
+                        int dot = cleanUrl.lastIndexOf('.');
+                        if (dot > slash && dot < cleanUrl.length() - 1) {
+                            extension = cleanUrl.substring(dot);
+                        }
+                        String imgName = "chap" + i + "/" + imageCount++ + extension;
+//                    String imgName = imageURL.substring(imageURL.length() - 10);
+//                    imgName = imgName.replaceAll("[\\\\/:*?\"<>|]", "");
+//                    if (imgName.indexOf('.') == -1) {
+//                        imgName = "chap" + i + "/" + imgName + ".jpg";
+//                    } else {
+//                        imgName = "chap" + i + "/" + imgName;
+//                    }
+                        try (FileOutputStream fos = new
+                                FileOutputStream("images/" + imgName)) {
+                            byte[] bytes;
+                            if (imageURL.startsWith("blob:")) {
+                                String base64ImageData = (String) page.evaluate("async (blobUrl) => {" +
+                                        "  const response = await fetch(blobUrl);" +
+                                        "  const arrayBuffer = await response.arrayBuffer();" +
+                                        "  const uint8Array = new Uint8Array(arrayBuffer);" +
+                                        "  let binaryString = '';" +
+                                        "  uint8Array.forEach(byte => {" +
+                                        "    binaryString += String.fromCharCode(byte);" +
+                                        "  });" +
+                                        "  return btoa(binaryString);" +  // Convert to base64
+                                        "}", imageURL);
+                                bytes = java.util.Base64.getDecoder().decode(base64ImageData);
 //                        bytes = (byte[])page.evaluate("async (url) => { " +
 //                                 "const response = await fetch(url); " +
 //                                "const blob = await response.blob(); " +
 //                                "const arrayBuffer = await blob.arrayBuffer(); " +
 //                                "return new Uint8Array(arrayBuffer); }", imageURL);
-                        } else {
-                            bytes = page.request().get(imageURL).body();
-                        }
-                        fos.write(bytes);
+                            } else {
+                                bytes = page.request().get(imageURL).body();
+                            }
+                            int res = mangaDetection.detectBytes(bytes);
+                            if (res ==  0) {
+                                System.out.println("This is manga");
+                                fos.write(bytes);
+                                System.out.println("Written " + imageURL);
+                            } else {
+                                System.out.println("This is not manga");
+                            }
 //                    System.out.println("Written " + imageURL);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
 
-                imageURLs.clear();
-                imageURLs = getURLS(page);
-                page.keyboard().press("Period");
-                page.waitForLoadState(LoadState.NETWORKIDLE,
-                        new Page.WaitForLoadStateOptions().setTimeout(60000));
-                System.out.println("Load Page Successfully!");
-                if (currentURL.equals(page.url())) {
-                    break;
+                    imageURLs.clear();
+                    imageURLs = getURLS(page);
+                    page.keyboard().press("Period");
+                    page.waitForLoadState(LoadState.NETWORKIDLE,
+                            new Page.WaitForLoadStateOptions().setTimeout(60000));
+                    System.out.println("Load Page Successfully!");
+                    if (currentURL.equals(page.url())) {
+                        break;
+                    }
+                    i++;
+                    System.out.println("Next chapter.");
                 }
-                i++;
-                System.out.println("Next chapter.");
             }
             browser.close();
         } catch (Exception exception) {
@@ -188,6 +211,8 @@ public class GetPageImages {
 //        getImages("https://www.w3.org/");
 //        getImages("https://nettruyenviet1.com/truyen-tranh/giao-chu-ma-giao-vung-trom-xem-ta-tu-luyen/chuong-1");
 //        getImages("https://www.mangakakalot.gg/manga/hunter-world-s-gardener/chapter-1");
-        getImages("https://mangaplus.shueisha.co.jp/viewer/1020497");
+//        getImages("https://mangaplus.shueisha.co.jp/viewer/1020497");
+//        getImages("https://mangafire.to/title/pm666-haimiya-senpai-wa-kowakute-kawaii/chapter/6888340");
+        getImages("https://mangaplus.shueisha.co.jp/viewer/1026622");
     }
 }

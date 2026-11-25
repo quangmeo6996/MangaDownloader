@@ -14,10 +14,14 @@ import java.util.ArrayList;
 public class GetMangaDexChapters {
     //    private static final Object lock = new Object();
     public static void getImages(String domainName) {
-        while (getImagesTenChap(domainName)) {}
+        String chapterURL = getImagesTenChap(domainName);
+        while (chapterURL != null) {
+            chapterURL = getImagesTenChap(chapterURL);
+        }
     }
 
-    public static boolean getImagesTenChap(String domainName) {
+    public static String getImagesTenChap(String domainName) {
+        String currentURL = "";
         try (Playwright playwright = Playwright.create()) {
             BrowserType chromium = playwright.chromium();
 //            Browser browser = chromium.launch();
@@ -75,6 +79,9 @@ public class GetMangaDexChapters {
 //            page.waitForLoadState(LoadState.LOAD);
             page.waitForLoadState(LoadState.DOMCONTENTLOADED);
             System.out.println("Load Page Successfully!");
+            String mangaTitle = page.locator("a.reader--header-manga").innerText();
+            mangaTitle = mangaTitle.replaceAll("[\\\\/:*?\"<>|]", "");
+            System.out.println(mangaTitle);
             page.locator("div:text(' Menu ')").click();
             page.locator("span:text('Reader Settings')").click();
             page.locator("span:text('Long Strip')").click();
@@ -122,7 +129,7 @@ public class GetMangaDexChapters {
                 System.out.println("Max: " + maxChapter);
 //                page.offRequest(request -> {});
                 System.out.println("Got " + imageURLs.size() + " Image URL!");
-                File newDirectory = new File("images/" + currentChapter);
+                File newDirectory = new File("images/" + mangaTitle + "/" + currentChapter);
                 newDirectory.mkdirs();
                 for (String imageURL : imageURLs) {
                     System.out.println("got this URL " + imageURL);
@@ -130,9 +137,9 @@ public class GetMangaDexChapters {
 //                        if (imgName.indexOf('.') == -1) {
 //                            imgName = currentChapter + "/" + imgName + ".jpg";
 //                        }
-                    imgName = currentChapter + "/" + imgName + ".jpg";
+                    imgName = imgName + ".jpg";
                     try (FileOutputStream fos = new
-                            FileOutputStream("images/" + imgName)) {
+                            FileOutputStream("images/" + mangaTitle + "/" + currentChapter + "/" + imgName)) {
                         byte[] bytes;
                         if (imageURL.startsWith("blob:")) {
                             String base64ImageData = (String) page.evaluate("async (blobUrl) => {" +
@@ -161,7 +168,7 @@ public class GetMangaDexChapters {
                         e.printStackTrace();
                     }
                 }
-                String currentURL = page.url();
+                currentURL = page.url();
 //                imageURLs.clear();
 //                imageURLs = getURLS(page);
 //                page.waitForTimeout(3000);
@@ -192,9 +199,9 @@ public class GetMangaDexChapters {
         } catch (Exception exception) {
 //            exception.printStackTrace();
             System.out.println("Something went wrong!");
-            return false;
+            return null;
         }
-        return true;
+        return currentURL;
     }
 
     public static void getImagesOneChap(String domainName) {
@@ -255,6 +262,9 @@ public class GetMangaDexChapters {
 //            page.waitForLoadState(LoadState.LOAD);
             page.waitForLoadState(LoadState.DOMCONTENTLOADED);
             System.out.println("Load Page Successfully!");
+            String mangaTitle = page.locator("a.reader--header-manga").innerText();
+            mangaTitle = mangaTitle.replaceAll("[\\\\/:*?\"<>|]", "");
+            System.out.println(mangaTitle);
             page.locator("div:text(' Menu ')").click();
             page.locator("span:text('Reader Settings')").click();
             page.locator("span:text('Long Strip')").click();
@@ -270,14 +280,14 @@ public class GetMangaDexChapters {
             System.out.println("Current: " + currentChapter);
             System.out.println("Max: " + maxChapter);
             System.out.println("Got " + imageURLs.size() + " Image URL!");
-            File newDirectory = new File("images/" + currentChapter);
+            File newDirectory = new File("images/" + mangaTitle + "/" + currentChapter);
             newDirectory.mkdirs();
             for (String imageURL : imageURLs) {
                 System.out.println("got this URL " + imageURL);
                 String imgName = imageURL.substring(imageURL.length() - 5);
-                imgName = currentChapter + "/" + imgName + ".jpg";
+                imgName = "images/" + mangaTitle + "/" + currentChapter + "/" + imgName + ".jpg";
                 try (FileOutputStream fos = new
-                        FileOutputStream("images/" + imgName)) {
+                        FileOutputStream(imgName)) {
                     byte[] bytes;
                     if (imageURL.startsWith("blob:")) {
                         String base64ImageData = (String) page.evaluate("async (blobUrl) => {" +
@@ -324,8 +334,8 @@ public class GetMangaDexChapters {
     }
 
     public static void main(String[] args) {
-//        getImages("https://mangadex.org/chapter/cccd6017-87d0-4a02-84d5-1f8be9ba5253/1");
-        getImages("https://mangaplus.shueisha.co.jp/viewer/1020497");
+        getImagesTenChap("https://mangadex.org/chapter/cccd6017-87d0-4a02-84d5-1f8be9ba5253/1");
+//        getImages("https://mangaplus.shueisha.co.jp/viewer/1020497");
 //        getImages("https://mangadex.org/chapter/aadf8438-41c5-4d08-bfd9-ab0acf6e4b4f/1");
 //        getImages("https://www.nelomanga.net/manga/the-villainess-just-wantsto-live-in-peace/chapter-56");
 //        getImages("https://www.w3.org/");

@@ -15,7 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class toPDF {
+public class ToPDF {
     public static void imageToPdf(byte[] bytes, PDDocument document) throws IOException {
 //        PDDocument document = new PDDocument();
         PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, bytes, "f7235.jpg");
@@ -30,10 +30,14 @@ public class toPDF {
     }
 
     public static void getPDFs(String domainName) {
-        while (getPDFsTenChap(domainName)) {}
+        String chapterURL = getPDFsTenChap(domainName);
+        while (chapterURL != null) {
+            chapterURL = getPDFsTenChap(chapterURL);
+        }
     }
 
-    public static boolean getPDFsTenChap(String domainName) {
+    public static String getPDFsTenChap(String domainName) {
+        String currentURL = "";
         try (Playwright playwright = Playwright.create()) {
             BrowserType chromium = playwright.chromium();
             Browser browser = chromium.launch(new BrowserType.LaunchOptions().setHeadless(true));
@@ -44,6 +48,9 @@ public class toPDF {
             page.navigate(domainName);
             page.waitForLoadState(LoadState.DOMCONTENTLOADED);
             System.out.println("Load Page Successfully!");
+            String mangaTitle = page.locator("a.reader--header-manga").innerText();
+            mangaTitle = mangaTitle.replaceAll("[\\\\/:*?\"<>|]", "");
+            System.out.println(mangaTitle);
             page.locator("div:text(' Menu ')").click();
             page.locator("span:text('Reader Settings')").click();
             page.locator("span:text('Long Strip')").click();
@@ -59,7 +66,7 @@ public class toPDF {
                 System.out.println("Current: " + currentChapter);
                 System.out.println("Max: " + maxChapter);
                 System.out.println("Got " + imageURLs.size() + " Image URL!");
-                File newDirectory = new File("pdfs");
+                File newDirectory = new File("pdfs" + "/" + mangaTitle);
                 newDirectory.mkdirs();
 
                 PDDocument document = new PDDocument();
@@ -89,9 +96,9 @@ public class toPDF {
                     imageToPdf(bytes, document);
 
                 }
-                document.save("pdfs/" + currentChapter + ".pdf");
+                document.save("pdfs/" + mangaTitle + "/" + currentChapter + ".pdf");
 
-                String currentURL = page.url();
+                currentURL = page.url();
 
                 page.keyboard().press("Period");
                 page.waitForFunction("url => window.location.href !== url", currentURL);
@@ -107,9 +114,9 @@ public class toPDF {
             browser.close();
         } catch (Exception exception) {
             System.out.println("Something went wrong!");
-            return false;
+            return null;
         }
-        return true;
+        return currentURL;
     }
 
     public static void getPDFsOneChap(String domainName) {
@@ -123,6 +130,8 @@ public class toPDF {
             page.navigate(domainName);
             page.waitForLoadState(LoadState.DOMCONTENTLOADED);
             System.out.println("Load Page Successfully!");
+            String mangaTitle = page.locator("a.reader--header-manga").innerText();
+            mangaTitle = mangaTitle.replaceAll("[\\\\/:*?\"<>|]", "");
             page.locator("div:text(' Menu ')").click();
             page.locator("span:text('Reader Settings')").click();
             page.locator("span:text('Long Strip')").click();
@@ -138,7 +147,7 @@ public class toPDF {
             System.out.println("Current: " + currentChapter);
             System.out.println("Max: " + maxChapter);
             System.out.println("Got " + imageURLs.size() + " Image URL!");
-            File newDirectory = new File("pdfs");
+            File newDirectory = new File("pdfs" + "/" + mangaTitle);
             newDirectory.mkdirs();
 
             PDDocument document = new PDDocument();
@@ -168,7 +177,7 @@ public class toPDF {
                 imageToPdf(bytes, document);
 
             }
-            document.save("pdfs/" + currentChapter + ".pdf");
+            document.save("pdfs/" + mangaTitle + "/" + currentChapter + ".pdf");
 
             browser.close();
         } catch (Exception exception) {
